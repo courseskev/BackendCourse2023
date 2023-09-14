@@ -1,94 +1,109 @@
-const { log } = require('console')
-const fs = require('fs')
-const nombreArchivo = "\productos"
-const tipoArchivo = '.json'
-
+const fs = require("fs")
 
 class ProductManager {
-    constructor(path){
-        this.path = path
-        console.log(path);
-    }
-
-    async getProducts() {
-        try {
-            console.log("entrando a getProducts");
-            if(fs.existsSync(this.path))
-            {
-                //1. Leer el archivo
-                const productsFile = await fs.promises.readFile(this.path, 'utf-8')
-                //2. retornar el objeto/array js
-                console.log(JSON.parse(productsFile));
-            } else {
-                console.log([])
-            }
-        } catch (error) {
-            console.log(error);
-        }
+    constructor(path) {
+        this.path = path,
+            this.products = []
     }
     
-
-    async createProduct(newProduct){
-        try {
-            const { title, description, price, thumbnail, code, stock } = newProduct
-            if (!title || !description || !price || !thumbnail || !code || !stock)
-                console.log("Falta una propiedad")
-            else{
-                const products = this.getProducts()
-                if(!(products.some((p) => p.code === code))){
-                    let id
+    getProducts = async () => {
+        const productlist = await fs.promises.readFile(this.path, "utf-8")
+        const productlistparse = JSON.parse(productlist)
+        return productlistparse
+    }
+    
+    
+    addProduct = async (title, description, price, thumbnail, code, stock) => {
+        if (!title || !description || !price || !thumbnail || !code || !stock) {
+            console.log("Falta una propiedad")
+            return
+        }
+        else {
+            const codigorepetido = this.products.find(elemento => elemento.code === code)
+            if (codigorepetido) {
+                console.log("El codigo de producto ya existe, ingrese otro.");
+                return
+            }
+            else {
+                let id
                     (!products.length) ? id = 1: id= products[products.length-1].id+1
-                    products.push({id, ...newProduct})
-                    await fs.promises.writeFile(this.path, JSON.stringify(products))
-                }else{
-                    console.log("El codigo de producto ya existe, ingrese otro.");                
+                const productnew = {
+                    id, title, description, price, thumbnail, code, stock
                 }
+                this.products.push(productnew)
+                await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, 2))
             }
-            
-        } catch (error) {
-            return error
         }
     }
 
+
     
-    
-    // getProductById(id){
-    //     const result = this.products.find(p=>p.id === id)
-    //     if(result)
-    //         console.log(result);
-    //     else
-    //         console.log("Not found");
-    // }
-    
-    
+    updateProduct = async (id, title, description, price, thumbnail, code, stock) => {
+        if (!id || !title || !description || !price || !thumbnail || !code || !stock) {
+            console.log("Falta una propiedad")
+            return
+        }
+        else {
+            const allproducts = await this.getProducts()
+            const codigorepetido = allproducts.find(elemento => elemento.code === code)
+            if (codigorepetido) {
+                console.log("El codigo de producto ya existe, ingrese otro.");
+                return
+            }
+            else {
+                const currentProductsList = await this.getProducts()
+                const newProductsList = currentProductsList.map(elemento => {
+                    if (elemento.id === id) {
+                        const updatedProduct = {
+                            ...elemento,
+                            title, description, price, thumbnail, code, stock
+                        }
+                        return updatedProduct
+                    }
+                    else {
+                        return elemento
+                    }
+                })
+                await fs.promises.writeFile(this.path, JSON.stringify(newProductsList, null, 2))
+            }
+
+        }
+    }
+
+
+    deleteProduct = async (id) => {
+        const allproducts = await this.getProducts()
+        const productswithoutfound = allproducts.filter(elemento => elemento.id !== id)
+        await fs.promises.writeFile(this.path, JSON.stringify(productswithoutfound, null, 2))
+    }
+    getProductbyId = async (id) => {
+        const allproducts = await this.getProducts()
+        const found = allproducts.find(element => element.id === id)
+        return found
+    }
+
+
+}
+
+async function generator() {
+
+    const productmanager = new ProductManager("products.json");
+    //await productmanager.addProduct("product1","description1",1500,"url","abc123",500)
+    await productmanager.getProducts()
+    // await productmanager.addProduct("product2","description2",1500,"url","abc122",500)
+    // await productmanager.addProduct("product3","description2",1500,"url","abc125",500)
+    // await productmanager.updateProduct(3,"zzzzz","xxxxxx",1500,"url","abc126",500)
+    //await productmanager.deleteProduct(2)
+    //const solo=await productmanager.getProductbyId(1)
+
+    //  const listado=await productmanager.getProducts()
+    //console.log(solo)
 }
 
 
-    
-
-
-
-// async function test() {
-//     const manager1 = new UsersManager()
-//     await manager1.createUser(user1)
-//     await manager1.createUser(user3)
-//     await manager1.createUser(user4)
-//     await manager1.createUser(user5)
-//     const users = await manager1.getUsers()
-//     console.log(users);
-//     await manager1.deleteUser(1)
-// }
-
-// test()
-
-const producto = {title: 'producto prueba', description:'Este es un producto prueba',
-price: 200, thumbnail:'Sin imagen', code:'abc123', stock:25}
-const producto2 = {title: 'producto prueba', description:'Este es un producto prueba',
-price: 200, thumbnail:'Sin imagen', code:'abc123'}
-const producto3 = {title: 'producto prueba', description:'Este es un producto prueba',
-price: 200, thumbnail:'Sin imagen', code:'abc1234', stock:25}
-
-const manager1 = new ProductManager("products.json")
-manager1.getProducts()
-manager1.createProduct(producto)
-manager1.getProducts()
+const productmanager = new ProductManager("products.json");
+//console.log( productmanager.getProducts());
+// await productmanager.addProduct("product2","description2",1500,"url","abc122",500)
+// await productmanager.addProduct("product3","description2",1500,"url","abc125",500)
+// await productmanager.updateProduct(3,"newnew","descp",1500,"url","abc126",500)
+// await productmanager.deleteProduct(2)
