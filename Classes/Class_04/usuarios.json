@@ -1,0 +1,16 @@
+[
+    {
+        "id": 2,
+        "nombre": "Pepito",
+        "apellido": "Suarez",
+        "edad": 40,
+        "curso": "JS for Dummies"
+    },
+    {
+        "id": 3,
+        "nombre": "Juanito",
+        "apellido": "El paspi",
+        "edad": 30,
+        "curso": "NodeJS for Dummies"
+    }
+]
