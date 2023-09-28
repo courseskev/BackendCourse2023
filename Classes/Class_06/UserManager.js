@@ -4,14 +4,16 @@ const path = 'Users.json'
 
 class UsersManager {
 
-    async getUsers() {
+    async getUsers(objectQuery) {
         try {
+            let limit
+            if(objectQuery)
+                limit = objectQuery.limit         
             if(fs.existsSync(path))
-            {
-                //1. Leer el archivo
+            {   
                 const usersFile = await fs.promises.readFile(path, 'utf-8')
-                //2. retornar el objeto/array js
-                return JSON.parse(usersFile)
+                const result = JSON.parse(usersFile)                
+                return limit ? result.slice(0,limit) : result
             } else {
                 return []
             }
@@ -29,9 +31,11 @@ class UsersManager {
             (!users.length) ? id = 1 : id = users[users.length-1].id + 1
             //2. Agregar al arreglo retornado el nuevo usuario que entre como parámetro
             //agrega el id más todo lo que venga en el objeto user
-            users.push({id, ...user})
+            const newUser = {id, ...user}
+            users.push(newUser)
             //3. Sobreescribir la información de users en el archivo
             await fs.promises.writeFile(path, JSON.stringify(users))
+            return newUser
         } catch (error) {
             return error
         }
@@ -40,12 +44,8 @@ class UsersManager {
     async getUserById(id) {
         try {
             const users = await this.getUsers()
-            const user = users.find(u => u.id === id)
-            if (!user) {
-                return 'No user'
-            } else {
-                return user
-            }
+            const user = users.find(u => u.id === id)            
+            return user            
         } catch (error) {
             return error
         }

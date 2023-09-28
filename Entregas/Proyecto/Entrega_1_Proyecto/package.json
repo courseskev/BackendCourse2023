@@ -1,11 +1,12 @@
 {
-  "name": "class-06",
+  "name": "entrega_1_proyecto",
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
-  "scripts": {    
-    "start": "nodemon server.js"
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "pm": "node ProductManager.js"
   },
   "keywords": [],
   "author": "",
