@@ -1,13 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 
-const ruta = "D:\\Courses\\2023\\CoderHouse\\Backend\\Entregas\\Entrega_2\\products.json"
+const ruta = "D:\\Courses\\2023\\CoderHouse\\Backend\\Entregas\\Entrega_3\\products.json"
+
 // const archivo = path.basename(ruta)
 
 class ProductManager{
     
-    constructor(rutaParametro){
-        if(rutaParametro){
+    constructor(rutaParametro = ""){
+        if(rutaParametro!==""){
             this.ruta = rutaParametro
             this.archivo = path.basename(this.ruta)
         }else{
@@ -16,7 +17,7 @@ class ProductManager{
         
     }
 
-    async getProducts(queryObject){
+    async getProducts(queryObject = {}){
         try {
             let limit
             if(queryObject){
@@ -31,29 +32,27 @@ class ProductManager{
                 return []
 
         } catch (error) {
-            return console.log(error)
+            throw new Error(error)
         }
     }
 
     async addProduct(product){
-        try {
-            const {title, description, price, thumbnail, code, stock} = product
-            if(!title || !description || !price || !thumbnail || !code || !stock)
-                return "Cannot add the product. One or more attributes are missing.";
+        try {            
             const products = await this.getProducts()
             let id
             if(products.length > 0){
                 if(products.find(product => product.code === code))
-                    return "Cannot add the product. The code already exist.";
+                    return -1;
                 id = products[products.length-1].id + 1
             }else{
                 id = 1
             }
-
-            products.push({id,...product})
+            const result = {id,...product} 
+            products.push(result)
             await fs.promises.writeFile(this.archivo, JSON.stringify(products))            
+            return result
         } catch (error) {
-            return console.log(error)
+            throw new Error(error)
         }
     }
 
@@ -61,11 +60,16 @@ class ProductManager{
         try {
             const products = await this.getProducts()
             if(products){
-                const tmpProducts = products.filter(p => p.id !== id)
-                await fs.promises.writeFile(this.archivo, JSON.stringify(tmpProducts))
+                const productToDelete = await this.getProductById(id)
+                if(productToDelete){
+                    const tmpProducts = products.filter(p => p.id !== id)
+                    await fs.promises.writeFile(this.archivo, JSON.stringify(tmpProducts))
+                    return productToDelete
+                }
+                return -1
             }
         } catch (error) {
-            return console.log(error)
+            throw new Error(error)
         }
     }
 
@@ -73,14 +77,11 @@ class ProductManager{
         try {
             const products = await this.getProducts()
             if(products){
-                const product = products.find(p => p.id === id)
-                if(product)
-                    return product
-                else
-                    return "Product not found."
+                const product = products.find(p => p.id === id)                
+                return product
             }
         } catch (error) {
-            return console.log(error)
+            throw new Error(error)
         }
     }
 
@@ -94,16 +95,15 @@ class ProductManager{
                         products[productIndex] = { ...products[productIndex], ...product, id };
                     } else {                        
                         products[productIndex][product.field] = product.value;
-                    }
-    
+                    }    
                     await fs.promises.writeFile(this.archivo, JSON.stringify(products))
-    
+                    return products[productIndex]
                 } else {
-                    return "Product not found.";
+                    return -1
                 }
             }
         } catch (error) {
-            return console.log(error)
+            throw new Error(error)
         }
     }
 
@@ -166,5 +166,5 @@ async function test(){
 }
 
 // test()
-
+let tmpFile = "D:\\products2.json" 
 export default new ProductManager()
