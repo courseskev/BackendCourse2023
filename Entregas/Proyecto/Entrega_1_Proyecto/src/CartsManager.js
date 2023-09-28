@@ -21,8 +21,8 @@ class CartManager{
     async getCarts(){
         try {            
             if(fs.existsSync(this.archivo)){
-                const Carts = await fs.promises.readFile(this.archivo, "utf-8")
-                const data = JSON.parse(Carts)
+                const carts = await fs.promises.readFile(this.archivo, "utf-8")
+                const data = JSON.parse(carts)
                 return data
             }
             else
@@ -35,16 +35,16 @@ class CartManager{
 
     async addCart(){
         try {            
-            const Carts = await this.getCarts()
+            const carts = await this.getCarts()
             let id
-            if(Carts.length > 0){                
-                id = Carts[Carts.length-1].id + 1
+            if(carts.length > 0){                
+                id = carts[carts.length-1].id + 1
             }else{
                 id = 1
             }
             const result = {id, products: [] } 
-            Carts.push(result)
-            await fs.promises.writeFile(this.archivo, JSON.stringify(Carts))
+            carts.push(result)
+            await fs.promises.writeFile(this.archivo, JSON.stringify(carts))
             return result
         } catch (error) {
             throw new Error(error)
@@ -53,11 +53,11 @@ class CartManager{
 
     async getCartById(id){
         try {
-            const Carts = await this.getCarts()
-            console.log(Carts);
-            if(Carts){
-                const Cart = Carts.find(p => p.id === id)                
-                return Cart
+            const carts = await this.getCarts()
+            console.log(carts);
+            if(carts){
+                const cart = carts.find(c => c.id === id)                
+                return cart
             }
         } catch (error) {
             throw new Error(error)
@@ -66,6 +66,7 @@ class CartManager{
 
     async addProductToCart(idCart, idProduct){
         try {
+            const carts = await this.getCarts()
             const cart = await this.getCartById(idCart)
             const product = await pm.getProductById(idProduct)
             
@@ -73,20 +74,24 @@ class CartManager{
                 throw new Error("Cart doesn't exist")
             if(!product)
                 throw new Error("Product doesn't exist")
-            
-            const productIndex = cart.products.findIndex(p=>p.id ===idProduct)
+            const cartIndex = carts.findIndex(c=>c.id === idCart)
+            const productIndex = cart.products.findIndex(p=>p.product ===idProduct)
             if(productIndex === -1){
                 const newProduct = {product:idProduct, quantity:1}
                 cart.products.push(newProduct)                
             }else{
-                cart.products[productIndex].quantity++
+                cart.products[productIndex].quantity++                
             }
-            await fs.promises.writeFile(this.archivo, JSON.stringify(cart))
+            carts[cartIndex] = { ...carts[cartIndex], ...cart, idCart }
+            
+            await fs.promises.writeFile(this.archivo, JSON.stringify(carts))
             return cart
         } catch (error) {
             throw new Error(error)
         }
     }
+
+    
 
 }
 
