@@ -1,0 +1,17 @@
+{
+  "name": "entrega_1_proyecto",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "pm": "node ProductManager.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
