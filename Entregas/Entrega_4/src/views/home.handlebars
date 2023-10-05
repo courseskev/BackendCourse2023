@@ -1,0 +1,13 @@
+{{#each products}}
+    <p><strong>Id:</strong> {{id}}</p>    
+    <p><strong>Title:</strong> {{title}} </p> 
+    <p><strong>Description</strong> {{description}} </p> 
+    <p><strong>Code:</strong> {{code}} </p> 
+    <p><strong>Price:</strong>  {{price}} </p>
+    <p><strong>Category:</strong> {{category}} </p> 
+    <p><strong>Thumbnail:</strong> {{thumbnail}} </p> 
+    <p><strong>Stock:</strong> {{stock}} </p> 
+    <p>=========</p>
+    {{else}}
+        <p>La lista de productos está vacía</p>
+{{/each}}

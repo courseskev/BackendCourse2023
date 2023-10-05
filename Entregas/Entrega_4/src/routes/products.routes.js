@@ -2,9 +2,9 @@ import {Router} from 'express'
 import pm from '../ProductManager.js'
 import {validatingData} from '../middleware/products.middleware.js'
 
-const router = Router()
+const productRouter = Router()
 
-router.get('/', async(request, response)=>{
+productRouter.get('/', async(request, response)=>{
     try {
         const products = await pm.getProducts(request.query)
         response.status(200).json({ message: "Successfully. Products found.", products})
@@ -13,7 +13,7 @@ router.get('/', async(request, response)=>{
     }
 })
 
-router.get('/:pid',async(request, response)=>{
+productRouter.get('/:pid',async(request, response)=>{
     try {
         const {id} = request.params
         const product = await pm.getProductById(+id)
@@ -26,7 +26,7 @@ router.get('/:pid',async(request, response)=>{
     }
 })
 
-router.post('/', validatingData, async(request, response)=>{
+productRouter.post('/', validatingData, async(request, response)=>{
     try {
         /*const {title, description, code, price, stock, category} = request.body
         if(!title || !description || !code || !price || !stock || !category)
@@ -41,7 +41,7 @@ router.post('/', validatingData, async(request, response)=>{
     }
 })
 
-router.delete('/:pid',async(request, response)=>{
+productRouter.delete('/:pid',async(request, response)=>{
     try {
         const {id} = request.params
         const product = await pm.deleteProduct(+id)
@@ -54,7 +54,7 @@ router.delete('/:pid',async(request, response)=>{
     }
 })
 
-router.put('/:pid',async(request, response)=>{
+productRouter.put('/:pid',async(request, response)=>{
     try {
         const {id} = request.params
         if(!request.body || Object.keys(request.body).length === 0)
@@ -69,4 +69,17 @@ router.put('/:pid',async(request, response)=>{
     }
 })
 
-export default router 
+productRouter.post('/signup', async(request, response)=>{
+    const {fullname, email} = request.body
+    if(!fullname || !email)
+        return response.status(400).json({message: 'Mandatory data is missing'})
+    try {
+        const result = await pm.signup(request.body)
+        response.redirect(`/api/views/signup/${result.id}`)
+    } catch (error) {
+        response.status(500).json({message: error.message})
+    }
+})
+
+
+export default productRouter 

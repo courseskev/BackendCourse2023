@@ -1,9 +1,10 @@
 import express from 'express'
 import productsRouter from './routes/products.routes.js'
 import cartsRouter from './routes/carts.routes.js'
-import viewRouter from './routes/views.router.js'
+import viewsRouter from './routes/views.router.js'
 import {__dirname} from './utils.js'
 import { engine } from 'express-handlebars'
+import {Server} from 'socket.io'
 
 const app = express()
 
@@ -17,8 +18,18 @@ app.set('view engine', 'handlebars')
 /*ROUTES*/
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
-app.use('/api/views', viewRouter)
+app.use('/api/views', viewsRouter)
 
-app.listen(8080, ()=>{
+
+const httpserver = app.listen(8080, ()=>{
     console.log("Starting server: Listenning 8080 port");
+})
+
+const socketServer = new Server(httpserver)
+
+socketServer.on("connection", (socket)=>{    
+    console.log(`Cliente conectado:  ${socket.id}`);
+    socket.on("disconnect", ()=>{
+        console.log(`Cliente desconectado: ${socket.id}`);
+    })
 })

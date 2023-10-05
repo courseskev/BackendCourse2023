@@ -106,14 +106,12 @@ class ProductManager{
         try {            
             const products = await this.getProducts()
             let id
-            if(products.length > 0){
-                if(products.find(p => p.code === product.code))
-                    return -1;
+            if(products.length > 0){                
                 id = products[products.length-1].id + 1
             }else{
                 id = 1
             }
-            const result = {id,...data, status:true} 
+            const result = {id,...data} 
             products.push(result)
             await fs.promises.writeFile(this.archivo, JSON.stringify(products))            
             return result
