@@ -45,7 +45,7 @@ class ProductManager{
             const result = {id,...product, status:true} 
             products.push(result)
             await fs.promises.writeFile(this.archivo, JSON.stringify(products))            
-            return result
+            return products
         } catch (error) {            
             throw new Error(error)
         }

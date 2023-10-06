@@ -33,3 +33,5 @@ socketServer.on("connection", (socket)=>{
         console.log(`Cliente desconectado: ${socket.id}`);
     })
 })
+
+export default socketServer

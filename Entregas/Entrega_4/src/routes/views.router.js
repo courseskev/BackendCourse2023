@@ -8,7 +8,7 @@ viewsRouter.get('/home', async(request, response)=>{
 })
 
 viewsRouter.get('/', (request, response)=>{
-    response.render('websocket')
+    response.render('realTime')
 })
 
 export default viewsRouter
