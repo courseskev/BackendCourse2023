@@ -35,12 +35,12 @@ socketServer.on("connection", (socket)=>{
     })
     socket.on("saveProduct",async (productData) => {        
         const result = await pm.addProduct(productData);
-        socket.emit("productUpdated", result)        
+        socketServer.sockets.emit("productUpdated", result)        
     });
 
     socket.on("deleteProduct", async(id)=>{        
         const result = await pm.deleteProduct(+id)        
-        socket.emit("productDeleted", result) 
+        socketServer.sockets.emit("productDeleted", result) 
     })
 })
 
