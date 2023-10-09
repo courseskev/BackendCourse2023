@@ -59,7 +59,7 @@ class ProductManager{
                 if(productToDelete){
                     const tmpProducts = products.filter(p => p.id !== id)
                     await fs.promises.writeFile(this.archivo, JSON.stringify(tmpProducts))
-                    return productToDelete
+                    return tmpProducts
                 }
                 return -1
             }

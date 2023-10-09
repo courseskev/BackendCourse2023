@@ -5,6 +5,7 @@ import viewsRouter from './routes/views.router.js'
 import {__dirname} from './utils.js'
 import { engine } from 'express-handlebars'
 import {Server} from 'socket.io'
+import pm from '../src/ProductManager.js'
 
 const app = express()
 
@@ -32,6 +33,17 @@ socketServer.on("connection", (socket)=>{
     socket.on("disconnect", ()=>{
         console.log(`Cliente desconectado: ${socket.id}`);
     })
+    socket.on("saveProduct",async (productData) => {        
+        const result = await pm.addProduct(productData);
+        socket.emit("productUpdated", result)        
+    });
+
+    socket.on("deleteProduct", async(id)=>{        
+        const result = await pm.deleteProduct(+id)        
+        socket.emit("productDeleted", result) 
+    })
 })
+
+
 
 export default socketServer

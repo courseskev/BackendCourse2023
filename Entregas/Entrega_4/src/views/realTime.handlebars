@@ -1,13 +1,37 @@
-<!-- En realTime.handlebars -->
+
+<style>
+    form {
+        max-width: 200px; 
+        margin-left: 10px;
+    }
+
+    input {
+        width: 100%; 
+        margin-bottom: 10px; 
+    }
+</style>
+<h3>Crear un Producto</h3>
+<form id="crearProductoForm" >
+    Title: <input type="text" name="title" id="title">
+    Description: <input type="text" name="description" id="description">
+    Code: <input type="text" name="code" id="code">
+    Price: <input type="number" name="price" id="price">
+    Category: <input type="text" name="category" id="category">
+    Thumbnail: <input type="text" name="thumbnail" id="thumbnail">
+    Stock: <input type="number" name="stock" id="stock">
+    <input type="submit" value="Crear">
+</form>
+<h3>Eliminar un Producto</h3>
+<form id="eliminarProductoForm" >
+    ID: <input type="text" name="id" id="id">    
+    <input type="submit" value="Eliminar">
+</form>
+
 
 <h2>Productos en Tiempo Real</h2>
+<div id="productList"></div>
 
-
-
-
-<div id="productList">
-    
-</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>
+

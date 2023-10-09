@@ -7,7 +7,7 @@ viewsRouter.get('/home', async(request, response)=>{
     response.render('home', {products})
 })
 
-viewsRouter.get('/', (request, response)=>{
+viewsRouter.get('/realtimeproducts', async(request, response)=>{    
     response.render('realTime')
 })
 
