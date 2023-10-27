@@ -6,6 +6,7 @@ import messagesRouter from './routes/messages.router.js';
 import viewsRouter from './routes/views.router.js';
 import { engine } from "express-handlebars"
 import { __dirname } from "./utils.js";
+import { Server } from "socket.io";
 //db connection
 import './dao/db/configDB.js';
 
