@@ -1,4 +1,4 @@
-import { messageModel } from "../db/models/messages.model";
+import { messageModel } from '../db/models/messages.model.js';
 
 class MessagesManager {
     

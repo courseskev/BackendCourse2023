@@ -1,5 +1,5 @@
 const socketClient = io();
-const h4Name = document.getElementById("name");
+const h4Name = document.getElementById("user");
 const form = document.getElementById("chatForm");
 const inputMessage = document.getElementById("message");
 const divChat = document.getElementById("chat");
@@ -45,16 +45,16 @@ socketClient.on('connected', () => {
 form.onsubmit = (e) => {
     e.preventDefault();
     const infoMessage = {
-        name: user,
+        user: user,
         message: inputMessage.value,
     };
-    inputMessage.innerText = " ";
-    socketClient.emit('message', infoMessage)
+    socketClient.emit('message', infoMessage);
+    document.getElementById("message").value = "";
 }
 
 socketClient.on('chat', (message) => {
     const chat = message.map( m => {
-        return `<p>${m.name}: ${m.message}</p>`
+        return `<p>${m.user}: ${m.message}</p>`
     }).join(" ")
     divChat.innerHTML = chat
 })

@@ -3,16 +3,16 @@ import { productManager } from "./productManager.js";
 
 class CartManager {
 
-    //Buscar un carrito por id
-    async findById(idCart) {
-        const response = await cartModel.findById(idCart);
-        return response;
-    }
-
     //Crear un carrito
     async createCart() {
         const newCart = { products: [] }
         const response = await cartModel.create(newCart);
+        return response;
+    }
+
+    //Buscar un carrito por id
+    async findById(idCart) {
+        const response = await cartModel.findById(idCart);
         return response;
     }
 
@@ -38,7 +38,7 @@ class CartManager {
                 cart.products[productIndex].quantity++;
             }
 
-            await cart.save();
+            return cart.save();
 
         } catch (error) {
             throw new Error('Cant add products to the cart');
