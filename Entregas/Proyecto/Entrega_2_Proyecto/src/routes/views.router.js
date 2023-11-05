@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { usersManager } from "../dao/managers/usersManager.js";
 import { productManager } from "../dao/managers/productManager.js";
+import { cartManager } from "../dao/managers/cartManager.js";
 
 const routerViews = Router();
 
@@ -22,8 +23,18 @@ routerViews.get("/home/:idUser", async (req, res) => {
 
 routerViews.get("/products", async(req, res)=>{
     const products = await productManager.findAll(req.query);
-    const cleanData = JSON.parse(JSON.stringify(products));    
+    const cleanData = JSON.parse(JSON.stringify(products));   
+    console.log(cleanData); 
     res.render("products", cleanData);
+})
+
+routerViews.get("/carts/:cid", async(req, res)=>{
+    const { cid } = req.params;
+    const carts = await cartManager.findCartById(cid);    
+    console.log(carts);
+    const cleanData = JSON.parse(JSON.stringify(carts));
+    console.log(cleanData);
+    res.render("cart", cleanData);
 })
 
 
