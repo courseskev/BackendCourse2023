@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.delete('/:idProduct', async (req, res) => {
+router.delete('/:pid', async (req, res) => {
     const { idProduct } = req.params;
     try {
         await productManager.deleteOne(idProduct);

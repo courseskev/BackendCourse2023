@@ -11,12 +11,12 @@ class ProductManager {
         //.lean() para obtener un resultado como obj plano JS
         //const response = await productModel.find().lean();
         
-        const {limit=2, page=1, sort, category, status} = obj
+        const {limit=10, page=1, sort, category, status} = obj
         let query = {}
         if(category) query = {category}
         if(status) query = {status}
         if(category && status) query = {category, status}
-        
+
         const response = await productModel.paginate(query, { limit, page })
 
         if (sort) {

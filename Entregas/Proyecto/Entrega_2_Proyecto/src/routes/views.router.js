@@ -22,7 +22,8 @@ routerViews.get("/home/:idUser", async (req, res) => {
 
 routerViews.get("/products", async(req, res)=>{
     const products = await productManager.findAll(req.query);
-    res.render("products", {products });
+    const cleanData = JSON.parse(JSON.stringify(products));    
+    res.render("products", cleanData);
 })
 
 

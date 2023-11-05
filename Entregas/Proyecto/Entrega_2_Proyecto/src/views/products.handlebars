@@ -1,0 +1,31 @@
+<style>
+    .card-img-top {
+        width: 100%;
+        height: 300px;        
+        object-fit: cover;        
+        margin: auto;
+    }
+</style>
+
+
+<div class="container mt-4">
+    <div class="row">
+        {{#each docs}}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{thumbnails}}" class="card-img-top" alt="Imagen del producto">
+                <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{description}}</p>
+                    <p class="card-text">Código: {{code}}</p>
+                    <p class="card-text">Precio: ${{price}}</p>
+                    <p class="card-text">Disponibilidad: {{#if status}}Disponible{{else}}No disponible{{/if}}</p>
+                    <p class="card-text">Stock: {{stock}}</p>
+                    <p class="card-text">Categoría: {{category}}</p>
+                    <a href="/product/{{_id}}" class="btn btn-primary">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
