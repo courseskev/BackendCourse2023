@@ -2,17 +2,17 @@ import { Router } from "express";
 import { usersManager } from "../dao/managers/usersManager.js";
 import { productManager } from "../dao/managers/productManager.js";
 
-const router = Router();
+const routerViews = Router();
 
-router.get("/signup", (req, res) => {
+routerViews.get("/signup", (req, res) => {
     res.render("signup");
 });
 
-router.get("/chat", (req, res) => {
+routerViews.get("/chat", (req, res) => {
     res.render("chat");
 })
 
-router.get("/home/:idUser", async (req, res) => {
+routerViews.get("/home/:idUser", async (req, res) => {
     const { idUser } = req.params;
     const user = await usersManager.findById(idUser);
     const products = await productManager.findAll();
@@ -20,4 +20,10 @@ router.get("/home/:idUser", async (req, res) => {
     res.render("home", { first_name, last_name, products });
 })
 
-export default router
+routerViews.get("/products", async(req, res)=>{
+    const products = await productManager.findAll(req.query);
+    res.render("products", {products });
+})
+
+
+export default routerViews

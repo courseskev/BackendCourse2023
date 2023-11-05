@@ -5,10 +5,32 @@ const router = Router();
 
 router.get("/", async (req, res) => {
     try {
-        const products = await productManager.findAll();
-        res.status(200).json({ message: "Producs", products })
-    } catch (error) {
-        res.status(500).json({ message: error.message })
+        const result = await productManager.findAll(req.query);
+        const info = {
+            status: "success",
+            payload: result.docs,
+            totalPages: result.totalPages,
+            prevPage: result.prevPage,
+            nextPage: result.nextPage,
+            hasPrevPage : result.hasPrevPage,
+            hasNextPage : result.hasNextPage,
+            prevLink: result.hasPrevPage ? `http://localhost:8080/api/products?page=${result.prevPage}`: null,
+            nextLink: result.hasNextPage ? `http://localhost:8080/api/products?page=${result.nextPage}`: null
+        }
+        res.status(200).json({ message: "Products", info })
+    } catch (err) {
+        const info = {
+            status: "error",
+            error: err.message,
+            totalPages: null,
+            prevPage: null,
+            nextPage: null,
+            hasPrevPage : null,
+            hasNextPage : null,
+            prevLink: null,
+            nextLink: null
+        }
+        res.status(500).json({ message: "Products Error", info  })
     }
 }); 
 

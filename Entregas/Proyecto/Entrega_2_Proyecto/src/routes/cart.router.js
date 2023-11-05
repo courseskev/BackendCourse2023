@@ -7,7 +7,7 @@ const router = Router();
 router.get("/:idCart", async (req, res) => {
     const { idCart } = req.params;
     try {
-        const cart = await cartManager.findById(idCart);
+        const cart = await cartManager.findCartById(idCart)
         if (!cart) {
             return res.status(404).json({ message: "Cart not found with id provided"})
         }

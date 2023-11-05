@@ -11,8 +11,8 @@ class CartManager {
     }
 
     //Buscar un carrito por id
-    async findById(idCart) {
-        const response = await cartModel.findById(idCart);
+    async findCartById(idCart) {
+        const response = await cartModel.findById(idCart).populate("products.product");
         return response;
     }
 

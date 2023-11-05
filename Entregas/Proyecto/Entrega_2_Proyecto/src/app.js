@@ -7,6 +7,7 @@ import { messagesManager } from './dao/managers/messagesManager.js'
 import { engine } from "express-handlebars"
 import { __dirname } from "./utils.js";
 import { Server } from "socket.io";
+
 //db connection
 import './dao/db/configDB.js';
 
@@ -25,7 +26,7 @@ app.set("view engine", "handlebars");
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/users", usersRouter);
-app.use("/", viewsRouter)
+app.use("/views", viewsRouter)
 
 const PORT = 8080
 const httpServer = app.listen(PORT, () => {

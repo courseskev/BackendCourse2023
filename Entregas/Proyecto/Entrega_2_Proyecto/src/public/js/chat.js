@@ -7,7 +7,7 @@ let user;
 
 Swal.fire({
     title: 'Welcome!',
-    text: 'What is your email',
+    text: 'What is your email?',
     input: 'text',
     inputValidator: (value) => {
         if (!value) {
