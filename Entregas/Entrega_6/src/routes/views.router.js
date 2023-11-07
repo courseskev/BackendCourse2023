@@ -12,8 +12,12 @@ routerViews.get("/login", (req, res) => {
 });
 
 routerViews.get("/signup", (req, res) => {
-    if(!req.session.user)
-        return res.redirect("/views/login")
+    if(req.session.user){
+        req.session.destroy(() => {
+            res.redirect("/views/signup")
+        })
+    }
+        
     res.render("signup");
 });
 

@@ -38,8 +38,7 @@ sessionRouter.post("/login", async (req, res) => {
                 email === "adminCoder@coder.com" && password === "adminCod3r123"
                     ? { email, name: result.first_name+result.last_name, isAdmin: true }
                     : { email, name: result.first_name+result.last_name, isAdmin: false };
-            req.session.user = sessionInfo
-            //req.session.user = { email, name: result.first_name + result.last_name }
+            req.session.user = sessionInfo            
             res.redirect("/views/products")
         }
 
