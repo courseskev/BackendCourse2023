@@ -5,7 +5,7 @@
         <div class="col-md-12">
             <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
                 <div>
-                    <span>Welcome!, you're logged as {{user.first_name}} ({{user.email}})</span>
+                    <span>Welcome!, you're logged as {{user.first_name}} {{user.last_name}} ({{user.email}})</span>
                     {{#if user.isAdmin}}
                         <span class="ml-2">Role: Admin</span>
                     {{else}}
@@ -13,7 +13,7 @@
                     {{/if}}
                 </div>
                 <div class="ml-auto">
-                    <a href="/api/sessions/logout" class="btn btn-secondary">Logout</a>
+                    <a href="/api/sessions/logout" class="btn btn-secondary">Log out</a>
                 </div>
             </div>
         </div>

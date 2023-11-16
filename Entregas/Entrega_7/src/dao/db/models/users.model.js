@@ -18,9 +18,15 @@ const usersSchema = new Schema({
         type:String,
         required: true
     },
-    isAdmin: {
-        type:Boolean,
-        default: false
+    role: {
+        type:String,
+        enum: ['ADMIN', 'STANDARD'],
+        default: 'STANDARD'
+    },
+    auth: {
+        type: String,
+        enum: ['GOOGLE', 'GITHUB', 'NONE'],
+        default: 'NONE'
     }
 })
 

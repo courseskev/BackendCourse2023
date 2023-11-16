@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { usersManager } from '../dao/managers/usersManager.js'
-import {hashData, compareData} from '../utils.js'
+import { hashData, compareData } from '../utils.js'
 import passport from 'passport'
 
 const sessionRouter = Router()
@@ -52,7 +52,7 @@ const sessionRouter = Router()
 // })
 
 sessionRouter.post("/forgotPassword", async (req, res) => {
-    const {email, password, password2 } = req.body
+    const { email, password, password2 } = req.body
     if (!email || !password || !password2)
         return res.status(400).json({ message: "All fields are mandatory" })
     if (password !== password2)
@@ -61,15 +61,15 @@ sessionRouter.post("/forgotPassword", async (req, res) => {
         const passwordHashed = await hashData(password)
         const user = await usersManager.findByEmail(email)
         let result = "";
-        if(user){
-            result = await usersManager.updateOne(user._id, {password : passwordHashed})
+        if (user) {
+            result = await usersManager.updateOne(user._id, { password: passwordHashed })
             console.log("User updated:", result);
             return res.redirect("/views/login")
         }
-        else{
+        else {
             result = "Not user found"
             console.log("Result: ", result);
-        }        
+        }
         return res.redirect("/views/signup")
     } catch (err) {
         res.status(500).json({ Error: err.message })
@@ -84,15 +84,29 @@ sessionRouter.get("/logout", (req, res) => {
 
 
 
-/*PASSPORT-LOCAL STARTS*/ 
-sessionRouter.post("/signup", passport.authenticate("signup"), (req,res)=>{
+/*PASSPORT-LOCAL STARTS*/
+sessionRouter.post("/signup", passport.authenticate("signup"), (req, res) => {
     res.redirect("/views/login")
 })
 
-sessionRouter.post("/login", passport.authenticate("login"), (req,res)=>{    
+sessionRouter.post("/login", passport.authenticate("login"), (req, res) => {
     res.redirect("/views/products")
 })
-/*PASSPORT-LOCAL ENDS*/ 
+/*PASSPORT-LOCAL ENDS*/
+
+
+/*PASSPORT-GITHUB STARTS*/
+
+sessionRouter.get(
+    "/auth/github",
+    passport.authenticate("github", { scope: ["user:email"] })
+);
+
+sessionRouter.get("/callback", passport.authenticate("github"), (req, res) => {
+    res.redirect("/views/products")
+});
+
+/*PASSPORT-GITHUB ENDS*/
 
 
 export default sessionRouter

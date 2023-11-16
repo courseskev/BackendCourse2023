@@ -66,13 +66,30 @@
                     <input type="password" class="form-control" placeholder="Password" name="password" id="password">
                 </div>
                 {{#if error}}
-                    <div class="alert alert-danger" role="alert">{{error}}</div>
+                <div class="alert alert-danger" role="alert">{{error}}</div>
                 {{/if}}
-                <button type="submit" class="btn btn-black">Login</button>
-                <a href="/views/signup" class="btn btn-secondary">Register</a>
-                <br>
-                <a href="/views/forgotPassword" >forgot password?</a>
+
+                <div class="row align-items-center">
+                    <div class="col">
+                        <button type="submit" class="btn btn-black">Login</button>
+                    </div>
+                    <div class="col">
+                        <a href="/views/signup" class="btn btn-secondary">Register</a>
+                    </div>
+                    <div class="col">
+                        <!-- Botón para iniciar sesión con GitHub -->
+                        <a href="/api/sessions/auth/github" class="btn btn-dark">
+                            <i class="fab fa-github"></i> 
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col">
+                        <a href="/views/forgotPassword">Forgot password?</a>
+                    </div>
+                </div>
             </form>
-        </div>
+        </div>        
     </div>
 </div>

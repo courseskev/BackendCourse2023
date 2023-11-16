@@ -40,7 +40,8 @@ routerViews.get("/products", async(req, res)=>{
 
     const result = await productManager.findAll(req.query);
     const tmp = JSON.parse(JSON.stringify(result));        
-    const sessionUser =  JSON.parse(JSON.stringify(req.user));      
+    const sessionUser =  JSON.parse(JSON.stringify(req.user));  
+    sessionUser.isAdmin = sessionUser.role === 'ADMIN';    
     res.render("products", {products: tmp, user: sessionUser});
     
 })
