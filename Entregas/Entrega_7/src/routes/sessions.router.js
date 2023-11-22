@@ -76,8 +76,10 @@ sessionRouter.post("/forgotPassword", async (req, res) => {
     }
 })
 
-sessionRouter.get("/logout", (req, res) => {
-    req.session.destroy(() => {
+sessionRouter.get("/logout", async (req, res) => {
+    const tmpUser =  await usersManager.findByEmail("temporalGithub@mail.com") 
+    if (tmpUser) await usersManager.deleteOne(tmpUser.id)
+    req.session.destroy(() => {        
         res.redirect("/views/login")
     })
 })

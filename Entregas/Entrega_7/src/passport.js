@@ -67,6 +67,7 @@ passport.use("github", new githubStrategy({
     clientID: "Iv1.c54f3fc15aac900b",
     clientSecret: "077242d67cfa27e95ed2181ef7006a4def26fbad",
     callbackURL: "http://localhost:8080/api/sessions/callback",
+    scope: ["user:email"],
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         
