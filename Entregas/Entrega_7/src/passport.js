@@ -71,7 +71,7 @@ passport.use("github", new githubStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         
-        const userDB = await usersManager.findByEmail(profile._json.email);
+        const userDB = await usersManager.findByEmail(profile.emails[0].value);
 
         // if userDB isn't null then login is the path to follow. Otherwise, go to signup
         if (userDB) {
@@ -83,13 +83,16 @@ passport.use("github", new githubStrategy({
         }
         // signup: so userDB doesn't exist in DB.
         const randomPassword = generateRandomPassword(10);
+        console.log("PROFILE",profile);
+        console.log("PROFILE JSON",profile._json);
         const infoUser = {
-            first_name: profile._json.name ? profile._json.name.split(" ")[0] : "Git",
-            last_name: profile._json.name ? profile._json.name.split(" ")[0] : "Hub",
-            email: profile._json.email ? profile._json.email : "temporalGithub@mail.com",
+            first_name: profile._json.name ? profile._json.name.split(" ")[0] : profile.username,
+            last_name: profile._json.name ? profile._json.name.split(" ")[0] : " ",
+            email: profile ? profile.emails[0].value : "temporalGithub@mail.com",
             password: randomPassword,
             auth: 'GITHUB',
         };
+        console.log(infoUser);
         const createdUser = await usersManager.createOne(infoUser);
         done(null, createdUser);
     } catch (error) {
