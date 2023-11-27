@@ -2,6 +2,7 @@ import passport from "passport";
 import { usersManager } from "./dao/managers/usersManager.js"
 import { Strategy as localStrategy } from "passport-local";
 import { Strategy as githubStrategy } from "passport-github2";
+import { Strategy as googleStrategy } from "passport-google-oauth20";
 import { hashData, compareData } from './utils.js'
 
 
@@ -82,12 +83,10 @@ passport.use("github", new githubStrategy({
             }
         }
         // signup: so userDB doesn't exist in DB.
-        const randomPassword = generateRandomPassword(10);
-        console.log("PROFILE",profile);
-        console.log("PROFILE JSON",profile._json);
+        const randomPassword = generateRandomPassword(10);        
         const infoUser = {
             first_name: profile._json.name ? profile._json.name.split(" ")[0] : profile.username,
-            last_name: profile._json.name ? profile._json.name.split(" ")[0] : " ",
+            last_name: profile._json.name ? profile._json.name.split(" ")[1] : " ",
             email: profile ? profile.emails[0].value : "temporalGithub@mail.com",
             password: randomPassword,
             auth: 'GITHUB',
@@ -100,10 +99,45 @@ passport.use("github", new githubStrategy({
     }
 }
 ))
-
 /*GitHub strategy ends*/
 
-
+/*Google strategy starts*/
+passport.use("google", new googleStrategy({
+    clientID: "599805057598-0hrld41dtjioj116tmp1l96vlktg5itv.apps.googleusercontent.com",
+    clientSecret: "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",
+    callbackURL: "http://localhost:8080/api/sessions/auth/google/callback",    
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        console.log("PROFILE", profile);
+        console.log("PROFILE json", profile._json);
+        const userDB = await usersManager.findByEmail(profile._json.email);
+        console.log("userDB", userDB);
+        // if userDB isn't null then login is the path to follow. Otherwise, go to signup
+        if (userDB) {
+            if (userDB.auth === 'GOOGLE') {
+                return done(null, userDB);
+            } else {
+                return done(null, false);
+            }
+        }
+        // signup: so userDB doesn't exist in DB.
+        const randomPassword = generateRandomPassword(10);        
+        const infoUser = {
+            first_name: profile._json.given_name ? profile._json.given_name : profile._json.name,
+            last_name: profile._json.family_name ? profile._json.family_name : " ",
+            email: profile._json.email ? profile._json.email : "temporalGoogle@mail.com",
+            password: randomPassword,
+            auth: 'GOOGLE',
+        };
+        
+        const createdUser = await usersManager.createOne(infoUser);
+        done(null, createdUser);
+    } catch (error) {
+        done(error);
+    }
+}
+))
+/*Google strategy ends*/
 
 passport.serializeUser((user, done) => {
     done(null, user._id)

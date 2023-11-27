@@ -77,8 +77,10 @@ sessionRouter.post("/forgotPassword", async (req, res) => {
 })
 
 sessionRouter.get("/logout", async (req, res) => {
-    const tmpUser =  await usersManager.findByEmail("temporalGithub@mail.com") 
-    if (tmpUser) await usersManager.deleteOne(tmpUser.id)
+    const githubUser =  await usersManager.findByEmail("temporalGithub@mail.com") 
+    const googleUser =  await usersManager.findByEmail("temporalGoogle@mail.com") 
+    if (githubUser) await usersManager.deleteOne(githubUser.id)
+    if (googleUser) await usersManager.deleteOne(googleUser.id)
     req.session.destroy(() => {        
         res.redirect("/views/login")
     })
@@ -109,6 +111,20 @@ sessionRouter.get("/callback", passport.authenticate("github"), (req, res) => {
 });
 
 /*PASSPORT-GITHUB ENDS*/
+
+
+/*PASSPORT-GOOGLE STARTS*/
+
+sessionRouter.get(
+    "/auth/google",
+    passport.authenticate("google", { scope: ["profile","email"] })
+);
+
+sessionRouter.get("/auth/google/callback", passport.authenticate("google"), (req, res) => {
+    res.redirect("/views/products")
+});
+
+/*PASSPORT-GOOGLE ENDS*/
 
 
 export default sessionRouter
