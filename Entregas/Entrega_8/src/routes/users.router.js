@@ -38,12 +38,23 @@ router.post("/", async (req, res) => {
         return res.status(400).json({ message: "Some data is missing" });
     }
     try {
-        const createdUser = await usersManager.createOne(req.body);
+        const createdUser = await usersManager.createOne(req.body);        
         // res.status(200).json({ message: "User created ", user: createdUser })
         res.redirect(`/home/${createdUser._id}`)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
 });
+
+//Agregar un carrito al usuario
+router.post("/:uid/cart/:cid", async (req, res) => {
+    const { uid, cid } = req.params;
+    try {
+        const response = await usersManager.addCarttoUser(cid, pid);
+        res.status(200).json({ message: "Cart added", Cart: response });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
 
 export default router

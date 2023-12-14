@@ -1,4 +1,3 @@
-
 {{#if user}}
 <div class="container mt-4 full-width-container">
     <div class="row">
@@ -7,9 +6,11 @@
                 <div>
                     <span>Welcome!, you're logged as {{user.first_name}} {{user.last_name}} ({{user.email}})</span>
                     {{#if user.isAdmin}}
-                        <span class="ml-2">Role: Admin</span>
+                    <span class="ml-2">Role: Admin</span>
+                    <span class="ml-2">idCart: {{idCart}}</span>
                     {{else}}
-                        <span class="ml-2">Role: User</span>
+                    <span class="ml-2">Role: User</span>
+                    <span class="ml-2">idCart: {{idCart}}</span>
                     {{/if}}
                 </div>
                 <div class="ml-auto">
@@ -35,6 +36,7 @@
 </div>
 {{/if}}
 
+
 {{#if products.docs.length}}
 <div class="container mt-4 full-width-container">
     <div class="row">
@@ -50,7 +52,12 @@
                     <p class="card-text">Availability: {{#if status}}Yes{{else}}No{{/if}}</p>
                     <p class="card-text">Stock: {{stock}}</p>
                     <p class="card-text">Category: {{category}}</p>
-                    <a href="/product/{{_id}}" class="btn btn-primary">More Details</a>
+
+                    {{!-- <a href="/api/carts/{{../idCart}}/product/{{_id}}" class="btn btn-primary">Agregar al
+                        carrito</a> --}}
+
+                    
+                    <button class="btn btn-primary add-to-cart" data-product-id="{{_id}}">Agregar al carrito</button>
                 </div>
             </div>
         </div>
@@ -62,3 +69,33 @@
     There are not products to show
 </div>
 {{/if}}
+
+<script>
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const productId = event.target.getAttribute('data-product-id');
+            const cartId = "{{idCart}}"; // Obtener el ID del carrito desde la vista renderizada
+            console.log("productID", productId);
+            console.log("cartID", cartId);
+            try {
+                const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+                    method: 'POST',
+                    // Puedes incluir opciones adicionales como headers, body, etc., según sea necesario
+                });
+
+                if (response.ok) {
+                    // Manejar la respuesta si es exitosa
+                    alert('Producto agregado al carrito correctamente');
+                } else {
+                    // Manejar la respuesta si hay un error
+                    alert('Hubo un problema al agregar el producto al carrito');
+                }
+            } catch (error) {
+                // Manejar errores de red u otros errores
+                console.error('Error al enviar la solicitud POST', error);
+            }
+        });
+    });
+</script>

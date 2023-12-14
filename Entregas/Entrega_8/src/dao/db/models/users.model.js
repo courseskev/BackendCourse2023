@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import  { Schema, model, SchemaTypes } from "mongoose";
 
 const usersSchema = new Schema({
     first_name: {
@@ -18,6 +18,10 @@ const usersSchema = new Schema({
         type:String,
         required: true
     },
+    // age: {
+    //     type: Number, 
+    //     required: true
+    // },
     role: {
         type:String,
         enum: ['ADMIN', 'STANDARD'],
@@ -27,6 +31,13 @@ const usersSchema = new Schema({
         type: String,
         enum: ['GOOGLE', 'GITHUB', 'NONE'],
         default: 'NONE'
+    },
+    cart: {
+        type:[
+            {type: SchemaTypes.ObjectId, 
+            ref: "Cart"}
+        ],
+        default: []
     }
 })
 

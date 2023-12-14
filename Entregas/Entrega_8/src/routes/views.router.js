@@ -42,7 +42,10 @@ routerViews.get("/products", async(req, res)=>{
     const tmp = JSON.parse(JSON.stringify(result));        
     const sessionUser =  JSON.parse(JSON.stringify(req.user));  
     sessionUser.isAdmin = sessionUser.role === 'ADMIN';    
-    res.render("products", {products: tmp, user: sessionUser});
+    const idCart = sessionUser.cart[0];            
+    tmp.docs.cart = idCart;
+    console.log(tmp);
+    res.render("products", {products: tmp, user: sessionUser, idCart: idCart});
     
 })
 

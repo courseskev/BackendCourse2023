@@ -92,7 +92,7 @@ class CartManager {
             const updatedCart = await cartModel.findByIdAndUpdate(idCart, { products: [] }, { new: true });
             return updatedCart;
         } catch (error) {
-            throw new Error(`Error al eliminar todos los productos del carrito: ${error.message}`);
+            throw new Error(`Error while deleting all products from cart: ${error.message}`);
         }
     }
 }

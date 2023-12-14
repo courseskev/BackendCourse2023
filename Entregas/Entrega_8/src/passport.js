@@ -3,8 +3,10 @@ import { usersManager } from "./dao/managers/usersManager.js"
 import { Strategy as localStrategy } from "passport-local";
 import { Strategy as githubStrategy } from "passport-github2";
 import { Strategy as googleStrategy } from "passport-google-oauth20";
+import { ExtractJwt, Strategy as jwtStrategy } from "passport-jwt";
 import { hashData, compareData } from './utils.js'
 
+const SECRETJWT = "jwtSecret"
 
 function generateRandomPassword(length) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -32,6 +34,7 @@ passport.use("signup", new localStrategy({ passReqToCallback: true, usernameFiel
         if (email === 'adminCoder@coder.com')
             roleAssined = 'ADMIN'
         const result = await usersManager.createOne({ ...req.body, password: passwordHashed, role: roleAssined })
+        console.log("usuarioCreado", result);
         done(null, result)
     } catch (err) {
         done(err)
@@ -71,7 +74,7 @@ passport.use("github", new githubStrategy({
     scope: ["user:email"],
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        
+
         const userDB = await usersManager.findByEmail(profile.emails[0].value);
 
         // if userDB isn't null then login is the path to follow. Otherwise, go to signup
@@ -83,7 +86,7 @@ passport.use("github", new githubStrategy({
             }
         }
         // signup: so userDB doesn't exist in DB.
-        const randomPassword = generateRandomPassword(10);        
+        const randomPassword = generateRandomPassword(10);
         const infoUser = {
             first_name: profile._json.name ? profile._json.name.split(" ")[0] : profile.username,
             last_name: profile._json.name ? profile._json.name.split(" ")[1] : " ",
@@ -105,7 +108,7 @@ passport.use("github", new githubStrategy({
 passport.use("google", new googleStrategy({
     clientID: "599805057598-0hrld41dtjioj116tmp1l96vlktg5itv.apps.googleusercontent.com",
     clientSecret: "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",
-    callbackURL: "http://localhost:8080/api/sessions/auth/google/callback",    
+    callbackURL: "http://localhost:8080/api/sessions/auth/google/callback",
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         console.log("PROFILE", profile);
@@ -121,7 +124,7 @@ passport.use("google", new googleStrategy({
             }
         }
         // signup: so userDB doesn't exist in DB.
-        const randomPassword = generateRandomPassword(10);        
+        const randomPassword = generateRandomPassword(10);
         const infoUser = {
             first_name: profile._json.given_name ? profile._json.given_name : profile._json.name,
             last_name: profile._json.family_name ? profile._json.family_name : " ",
@@ -129,7 +132,7 @@ passport.use("google", new googleStrategy({
             password: randomPassword,
             auth: 'GOOGLE',
         };
-        
+
         const createdUser = await usersManager.createOne(infoUser);
         done(null, createdUser);
     } catch (error) {
@@ -138,6 +141,20 @@ passport.use("google", new googleStrategy({
 }
 ))
 /*Google strategy ends*/
+
+
+/*JWT strategy starts*/
+const fromCookies = (req) => {
+    return req.cookies.token;
+}
+passport.use('jwt', new jwtStrategy(
+    { jwtFromRequest: ExtractJwt.fromExtractors([fromCookies]), secretOrKey: SECRETJWT },
+    (jwt_payload, done) => { done(null, jwt_payload) }
+    ))
+
+/*JWT strategy ends*/
+
+
 
 passport.serializeUser((user, done) => {
     done(null, user._id)
