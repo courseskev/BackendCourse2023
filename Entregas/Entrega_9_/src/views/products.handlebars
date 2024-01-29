@@ -1,0 +1,101 @@
+{{#if user}}
+<div class="container mt-4 full-width-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
+                <div>
+                    <span>Welcome!, you're logged as {{user.first_name}} {{user.last_name}} ({{user.email}})</span>
+                    {{#if user.isAdmin}}
+                    <span class="ml-2">Role: Admin</span>
+                    <span class="ml-2">idCart: {{idCart}}</span>
+                    {{else}}
+                    <span class="ml-2">Role: User</span>
+                    <span class="ml-2">idCart: {{idCart}}</span>
+                    {{/if}}
+                </div>
+                <div class="ml-auto">
+                    <a href="/api/sessions/logout" class="btn btn-secondary">Log out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{{else}}
+<div class="container mt-4 full-width-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning" role="alert">
+                No user logged
+            </div>
+        </div>
+    </div>
+</div>
+{{/if}}
+
+
+{{#if products.docs.length}}
+<div class="container mt-4 full-width-container">
+    <div class="row">
+        {{#each products.docs}}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{thumbnails}}" class="card-img-top" alt="Imagen del producto">
+                <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{description}}</p>
+                    <p class="card-text">Code: {{code}}</p>
+                    <p class="card-text">Price: ${{price}}</p>
+                    <p class="card-text">Availability: {{#if status}}Yes{{else}}No{{/if}}</p>
+                    <p class="card-text">Stock: {{stock}}</p>
+                    <p class="card-text">Category: {{category}}</p>
+
+                    {{!-- <a href="/api/carts/{{../idCart}}/product/{{_id}}" class="btn btn-primary">Agregar al
+                        carrito</a> --}}
+
+                    
+                    <button class="btn btn-primary add-to-cart" data-product-id="{{_id}}">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{else}}
+<div class="alert alert-warning" role="alert">
+    There are not products to show
+</div>
+{{/if}}
+
+<script>
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const productId = event.target.getAttribute('data-product-id');
+            const cartId = "{{idCart}}"; // Obtener el ID del carrito desde la vista renderizada
+            console.log("productID", productId);
+            console.log("cartID", cartId);
+            try {
+                const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+                    method: 'POST',
+                    // Puedes incluir opciones adicionales como headers, body, etc., según sea necesario
+                });
+
+                if (response.ok) {
+                    // Manejar la respuesta si es exitosa
+                    alert('Producto agregado al carrito correctamente');
+                } else {
+                    // Manejar la respuesta si hay un error
+                    alert('Hubo un problema al agregar el producto al carrito');
+                }
+            } catch (error) {
+                // Manejar errores de red u otros errores
+                console.error('Error al enviar la solicitud POST', error);
+            }
+        });
+    });
+</script>

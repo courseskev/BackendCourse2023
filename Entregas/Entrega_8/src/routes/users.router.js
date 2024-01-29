@@ -22,7 +22,7 @@ router.get("/:idUser", async (req, res) => {
     }
 });
 
-router.get("/:idUser", async (req, res) => {
+router.delete("/:idUser", async (req, res) => {
     const { idUser } = req.params;
     try {
         await usersManager.deleteOne(idUser);
@@ -50,7 +50,7 @@ router.post("/", async (req, res) => {
 router.post("/:uid/cart/:cid", async (req, res) => {
     const { uid, cid } = req.params;
     try {
-        const response = await usersManager.addCarttoUser(cid, pid);
+        const response = await usersManager.addCarttoUser(uid, cid );
         res.status(200).json({ message: "Cart added", Cart: response });
     } catch (error) {
         res.status(500).json({ message: error.message });

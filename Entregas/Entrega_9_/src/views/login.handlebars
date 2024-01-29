@@ -1,0 +1,102 @@
+<script>
+    function validateForm() {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var alertElement = document.getElementById('alert');
+
+        // Ocultar el alerta si ya está visible
+        alertElement.style.display = 'none';
+
+        // Validar que todos los campos estén llenos y marcar los campos inválidos
+        var fields = ['email', 'password'];
+        var isValid = true;
+        fields.forEach(function (field) {
+            var element = document.getElementById(field);
+            if (!element.value) {
+                element.classList.add('is-invalid');
+                isValid = false;
+                return false; // Evitar el envío del formulario
+            } else {
+                element.classList.remove('is-invalid');
+            }
+        });
+
+        // Validar el formato del correo electrónico
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email && !emailPattern.test(email)) {
+            document.getElementById('email').classList.add('is-invalid');
+            document.getElementById('email-error-message').innerHTML = 'Please enter a valid email address'; // Nuevo mensaje de error
+            isValid = false;
+            return false; // Evitar el envío del formulario
+        } else {
+            document.getElementById('email-error-message').innerHTML = ''; // Limpiar el mensaje de error si la validación pasa
+        }
+
+
+        if (!isValid) {
+            alertElement.innerHTML = '<div class="alert alert-danger" role="alert">Please, check the red fields</div>';
+            alertElement.style.display = 'block';
+            return false; // Evitar el envío del formulario
+        }
+
+        return true; // Envía el formulario si todas las validaciones pasan
+    }
+</script>
+
+
+<div class="sidenav">
+    <div class="login-main-text">
+        <h2>Application<br> Login Page</h2>
+        <p>Login or register from here to access.</p>
+    </div>
+</div>
+<div class="main">
+    <div id="alert"></div>
+    <div class="col-md-6 col-sm-12">
+        <div class="login-form">
+            <form action="/api/sessions/login" method="post" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" placeholder="email" name="email" id="email">
+                    <div class="invalid-feedback" id="email-error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Password" name="password" id="password">
+                </div>
+                {{#if error}}
+                <div class="alert alert-danger" role="alert">{{error}}</div>
+                {{/if}}
+
+                <div class="row align-items-center">
+                    <div class="col">
+                        <button type="submit" class="btn btn-black">Login</button>
+                    </div>
+                    <div class="col">
+                        <a href="/views/signup" class="btn btn-secondary">Register</a>
+                    </div>
+                    <div class="col">
+                        <!-- Botón para iniciar sesión con GitHub -->
+                        <a href="/api/sessions/auth/github" class="btn btn-dark">
+                            <i class="fab fa-github"></i> 
+                        </a>                        
+                    </div>
+                    <div class="col">
+                        <!-- Botón para iniciar sesión con Google -->
+                        <a href="/api/sessions/auth/google" class="btn btn-dark">                             
+                            <i class="bi bi-google"></i>
+                        </a>
+                    </div>
+                    
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col">
+                        <a href="/views/forgotPassword">Forgot password?</a>
+                    </div>
+                </div>
+            </form>
+        </div>        
+    </div>
+</div>
