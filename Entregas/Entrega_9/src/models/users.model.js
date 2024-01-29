@@ -18,10 +18,6 @@ const usersSchema = new Schema({
         type:String,
         required: true
     },
-    age: {
-        type: Number, 
-        required: true
-    },
     role: {
         type:String,
         enum: ['ADMIN', 'STANDARD'],

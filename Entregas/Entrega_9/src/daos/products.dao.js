@@ -1,6 +1,6 @@
-import { productModel } from "../db/models/product.model.js";
+import { productModel } from "../models/product.model.js";
 
-class ProductManager {
+class ProductDao {
     async usingAgregation(order){
         const res = await productModel.agregation([
             {$sort: {price: order}}
@@ -30,25 +30,25 @@ class ProductManager {
         return response;
     }
 
-    async findById(id) {
+    async findProductById(id) {
         const response = await productModel.findById(id);
         return response;
     }
 
-    async createOne(obj) {
+    async createProduct(obj) {
         const response = await productModel.create(obj);
         return response;
     }
 
-    async updateOne(id, obj) {
-        const response = await productModel.updateOne({ _id: id }, obj);
+    async updateProduct(id, obj) {
+        const response = await productModel.findByIdAndUpdate(id, obj);
         return response;
     }
 
-    async deleteOne(id) {
-        const response = await productModel.deleteOne({ _id: id })
+    async deleteProduct(id) {
+        const response = await productModel.findByIdAndDelete(id)
         return response;
     }
 }
 
-export const productManager = new ProductManager();
+export const productDao = new ProductDao();

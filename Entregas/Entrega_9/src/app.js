@@ -1,24 +1,24 @@
 import express from "express";
 import productRouter from './routes/product.router.js';
 import cartRouter from './routes/cart.router.js';
-import usersRouter from './routes/users.router.js';
+import userRouter from './routes/user.router.js';
 import viewsRouter from './routes/views.router.js';
 import sessionRouter from './routes/sessions.router.js'
 import MongoStore from 'connect-mongo'
 import session from 'express-session'
-import { messagesManager } from './dao/managers/messagesManager.js'
+import { messagesDao } from './daos/messages.dao.js'
 import { engine } from "express-handlebars"
 import { __dirname } from "./utils.js";
 import { Server } from "socket.io";
 import './passport.js'
 import passport from 'passport'
+import configVar from './config/config.js'
+import program from './config/commander.js'
 
 //db connection
-import './dao/db/configDB.js';
+import './config/db.config.js';
 
 const app = express();
-const URI = "mongodb+srv://kevcourses:ZtzL3XjVLOnoIXLD@clusterkev2023.ktj0hec.mongodb.net/ecommerce?retryWrites=true&w=majority"
-//const URI = "mongodb+srv://lllanosc1:yx8JIfL7zakMi2Xk@cluster0.zzetdhr.mongodb.net/ecommerce?retryWrites=true&w=majority";
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -26,10 +26,10 @@ app.use(express.static(__dirname + '/public'));
 app.use(
     session({
         store: new MongoStore({
-            mongoUrl: URI
+            mongoUrl: configVar.mongoUri
         }),
-        secret: "secretSesion",
-        cookie: {maxAge: 60000}
+        secret: configVar.secretSession,
+        cookie: {maxAge: 600000}
     })
 );
 
@@ -45,15 +45,18 @@ app.set("view engine", "handlebars");
 //routes
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/users", userRouter);
 app.use("/api/sessions", sessionRouter)
 app.use("/views", viewsRouter)
 
 
-const PORT = 8080
+const PORT = Number(program.opts().port)
+
+
 const httpServer = app.listen(PORT, () => {
     console.log(`Listening port ${PORT}`);
 })
+
 
 //socketServer
 const socketServer = new Server(httpServer);
@@ -71,6 +74,6 @@ socketServer.on('connection', (socket) => {
     socket.on('message', async (info) => {
         messages.push(info);
         socketServer.emit('chat', messages);
-        const result = await messagesManager.createOne(info);
+        const result = await messagesDao.createOne(info);
     })
 })
